@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    stages {
+        stage ('Initialize') {
+            steps {
+                echo 'Welcome! This is Mazin. I am making a custom Jenkins pipeline.'
+            }
+        }
+        stage ('Build Phase') {
+            steps {
+                echo 'Building the application...'
+            }
+        }
+        stage ('Approval Stage') {
+            steps {
+                input('Would you like to proceed to the next phase?')
+            }
+        }
+        stage ('Integration Phase') {
+            when {
+                not {
+                    branch "main"
+                }
+            }
+            steps {
+                echo 'Integration tests running for non-main branch...'
+            }
+        }
+        stage ('Testing Phase') {
+            parallel {
+                stage ('Unit Tests') {
+                    steps {
+                        echo 'Running unit tests... part of first parallel stage'
+                    }
+                }
+                stage ('Functional Tests') {
+                    steps {
+                        echo 'Running functional tests...part of second parallel stage'
+                    }
+                }
+            }
+        }
+        stage ('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+            }
+        }
+    }
+}
